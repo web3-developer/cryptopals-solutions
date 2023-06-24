@@ -21,6 +21,7 @@ pub fn bytes_to_base64(bytes: &[u8]) -> String {
 
 #[cfg(test)]
 mod tests {
+
     use super::*;
 
     #[test]
