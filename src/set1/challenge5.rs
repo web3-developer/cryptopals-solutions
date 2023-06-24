@@ -3,14 +3,16 @@ use crate::set1::challenge1::hex_to_bytes;
 use crate::set1::challenge2::fixed_xor;
 
 pub fn repeat_key(in_key: &[u8], out_key: &mut [u8]) {
+    if in_key.is_empty() {
+        panic!("in_key cannot be empty");
+    }
 
     let mut idx = 0;
     out_key.fill_with( || {
-        let value = in_key[idx % 3];
+        let value = in_key[idx % in_key.len()];
         idx += 1;
         value
     } );
-
 }
 
 

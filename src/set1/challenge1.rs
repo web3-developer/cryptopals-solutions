@@ -8,14 +8,14 @@ pub fn bytes_to_hex(bytes: &[u8]) -> String {
     hex::encode(bytes.as_ref())
 }
 
-use base64::{Engine as _, engine::{general_purpose}};
+use base64_light::{base64_decode, base64_encode_bytes};
 
 pub fn base64_to_bytes(base64: &str) -> Vec<u8> {
-    general_purpose::STANDARD.decode(base64).unwrap()
+    base64_decode(base64)
 }
 
 pub fn bytes_to_base64(bytes: &[u8]) -> String {
-    general_purpose::STANDARD.encode(bytes)
+    base64_encode_bytes(bytes)
 }
 
 
