@@ -1,12 +1,13 @@
 
+use crate::set1::challenge1::hex_to_bytes;
+use crate::set1::challenge3::single_char_xor_find_best_candidate;
 
 
 #[cfg(test)]
 mod tests {
-    //use super::*;
 
-    use crate::set1::challenge1::hex_to_bytes;
-    use crate::set1::challenge3::single_char_xor_find_best_candidate;
+    use super::*;
+
 
     #[test]
     fn run_challenge4() {
@@ -338,22 +339,19 @@ e03555453d1e31775f37331823164c341c09e310463438481019fb0b12fa
 4c071a57e9356ee415103c5c53e254063f2019340969e30a2e381d5b2555
 32042f46431d2c44607934ed180c1028136a5f2b26092e3b2c4e2930585a".lines();
 
-        let mut best_candidate = (1f64, Vec::new(), "".to_owned());
-        for c in ciphertexts {
-            let result = single_char_xor_find_best_candidate(c);
+        let mut best_candidate = (1f64, 0, "".to_owned());
+        for c in ciphertexts.map(|e| hex_to_bytes(e)) {
+            let result = single_char_xor_find_best_candidate(&c);
             if result.0 < best_candidate.0 {
                 best_candidate = result;
             }
         }
 
-        //println!("{:?}", best_candidate);
         println!("Best candidate score = {}", best_candidate.0);
-        println!("Best candidate key = {}", std::str::from_utf8(&best_candidate.1).unwrap());
+        println!("Best candidate key = {}", best_candidate.1 as char);
         println!("Best candidate text = {}", best_candidate.2);
 
         assert_eq!("Now that the party is jumping\n", best_candidate.2);
     }
-
-
 
 }

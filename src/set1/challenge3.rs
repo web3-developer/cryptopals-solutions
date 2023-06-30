@@ -4,9 +4,9 @@ use character_frequency::{CaseSense, character_frequencies_w_case};
 use crate::set1::challenge1::hex_to_bytes;
 use crate::set1::challenge2::fixed_xor;
 
-// score text for probability of being english
-// each letter frequency is equal to the letter count / text.len
-// expect letter frequency are defined on the internet
+// Score text for probability of being english.
+// Each letter frequency is equal to the letter count / text.len.
+// Expected letter frequency are defined on the internet.
 // score = sum of each abs(expected freq - letter freq)
 pub fn score_text_by_character_frequency(text: &str) -> f64 {
     let expected_freq = HashMap::from([
@@ -41,32 +41,30 @@ pub fn score_text_by_character_frequency(text: &str) -> f64 {
     total_score
 }
 
-// finds the best text candidate for the given ciphertext assuming usage of a single character key
-pub fn single_char_xor_find_best_candidate(ciphertext: &str) -> (f64, Vec<u8>, String) {
-    let input = hex_to_bytes(ciphertext);
-
-    // 256 possible keys
-    // try brute force attack by decrypting with each key and checking for a valid message
-    let mut best_candidate: (f64, Vec<u8>, String) = (1f64, vec![0; input.len()], "".to_owned());
+// Finds the best text candidate for the given ciphertext assuming usage of a single character key
+pub fn single_char_xor_find_best_candidate(ciphertext: &[u8]) -> (f64, u8, String) {
+    // There are 256 possible keys.
+    // Try brute force attack by decrypting with each key and checking for a valid message.
+    let mut best_candidate: (f64, u8, String) = (1f64, 0, "".to_owned());
     for i in 0u8..=255 {
         // create a key stream of equal length
-        let key = vec![i; input.len()];
+        let key = vec![i; ciphertext.len()];
 
-        let result = fixed_xor(&input, &key);
+        let result = fixed_xor(&ciphertext, &key);
         let result_str = String::from_utf8(result);
 
-        if let Ok(value) = result_str {
-            // ignore the values that don't parse as text
+        if let Ok(value) = result_str { // ignore the values that don't parse as text
 
             let score = score_text_by_character_frequency(&value);
             if score < best_candidate.0 {
-                best_candidate = (score, key, value);
+                best_candidate = (score, key[0], value);
             }
         }
     }
 
     best_candidate
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -75,14 +73,13 @@ mod tests {
 
     #[test]
     fn run_challenge3() {
-        let ciphertext = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
-        let best_candidate = single_char_xor_find_best_candidate(ciphertext);
+        let ciphertext = hex_to_bytes("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
+        let best_candidate = single_char_xor_find_best_candidate(&ciphertext);
+        assert_eq!("Cooking MC's like a pound of bacon", best_candidate.2);
 
         println!("Best candidate score = {}", best_candidate.0);
-        println!("Best candidate key = {}", std::str::from_utf8(&best_candidate.1).unwrap());
+        println!("Best candidate key = {}", best_candidate.1 as char);
         println!("Best candidate text = {}", best_candidate.2);
-
-        assert_eq!("Cooking MC's like a pound of bacon", best_candidate.2);
     }
 
 }

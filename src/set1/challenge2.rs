@@ -7,7 +7,7 @@ pub fn fixed_xor(x: &[u8], y: &[u8]) -> Vec<u8> {
         panic!("x and y are not equal length");
     }
 
-    let mut result = Vec::new();
+    let mut result = Vec::with_capacity(x.len());
     for i in 0..x.len() {
         result.push(x[i] ^ y[i])
     }

@@ -2,6 +2,7 @@
 use crate::set1::challenge1::hex_to_bytes;
 use crate::set1::challenge2::fixed_xor;
 
+
 pub fn repeat_key(in_key: &[u8], out_key: &mut [u8]) {
     if in_key.is_empty() {
         panic!("in_key cannot be empty");
@@ -21,6 +22,7 @@ mod tests {
 
     use super::*;
 
+
     #[test]
     fn run_challenge5() {
         let input_plaintext = "Burning 'em, if you ain't quick and nimble
@@ -30,9 +32,9 @@ I go crazy when I hear a cymbal".as_bytes();
         let key = "ICE".as_bytes();
         let mut repeating_key = vec![0u8; input_plaintext.len()];
         repeat_key(key, &mut repeating_key);
-        //println!("{:?}", &repeating_key);
+        println!("repeating_key = {}", String::from_utf8(repeating_key.clone()).unwrap());
 
-        let result_ciphertext = fixed_xor(&repeating_key, input_plaintext);
+        let result_ciphertext = fixed_xor(input_plaintext, &repeating_key);
         assert_eq!(expected_ciphertext, result_ciphertext);
     }
 

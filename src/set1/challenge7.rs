@@ -1,21 +1,24 @@
 
+use openssl::error::ErrorStack;
 use openssl::symm::Cipher;
 use openssl::symm::decrypt;
 
 use crate::set1::challenge1::base64_to_bytes;
 
-pub fn aes_128_ecb_decrypt(key: &[u8], ciphertext: &[u8]) -> Vec<u8> {
-    decrypt(Cipher::aes_128_ecb(), key, None, &ciphertext).unwrap()
+
+pub fn aes_128_ecb_decrypt(key: &[u8], ciphertext: &[u8]) -> Result<Vec<u8>, ErrorStack> {
+    decrypt(Cipher::aes_128_ecb(), key, None, &ciphertext)
 }
+
 
 #[cfg(test)]
 mod tests {
 
     use super::*;
 
+
     #[test]
     fn run_challenge7() {
-
         let key = "YELLOW SUBMARINE".as_bytes();
 
         let ciphertext = base64_to_bytes("CRIwqt4+szDbqkNY+I0qbDe3LQz0wiw0SuxBQtAM5TDdMbjCMD/venUDW9BL
@@ -84,9 +87,11 @@ NhxYCjgSJzWOUD34Y1dAfcj57VINmQVEWyc8Tch8vg9MnHGCOfOjRqp0VGyA
 S15AVD2QS1V6fhRimJSVyT6QuGb8tKRsl2N+a2Xze36vgMhw7XK7zh//jC2H");
         //println!("{:?}", ciphertext);
 
-        let plaintext_bytes = aes_128_ecb_decrypt(key, &ciphertext);
+        let plaintext_bytes = aes_128_ecb_decrypt(key, &ciphertext).unwrap();
         let plaintext = String::from_utf8(plaintext_bytes).unwrap();
-        println!("{}", plaintext)
+        assert!(plaintext.contains("I'm back and I'm ringin' the bell"));
+
+        println!("{}", plaintext);
     }
 
 }

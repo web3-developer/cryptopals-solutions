@@ -1,9 +1,13 @@
 
+use std::collections::HashSet;
 
+use crate::set1::challenge1::{bytes_to_hex, hex_to_bytes};
 
 #[cfg(test)]
 mod tests {
-    //use super::*;
+
+    use super::*;
+
 
     #[test]
     fn run_challenge8() {
@@ -213,8 +217,30 @@ a6cadd53a2621482b7d66ecc82dc4ea6431bc0191c3801ac6b705df38c7fffe469043e5002096aca
 06df04188832b10afff94209d2aa1c8a123702de28234dcd3e0a7d36c1aa8449e6fa55e3e1e3d77d8424e87a45e38697755f84c49a99473797268113eb69098888947526035b246d00a630f6201ecc4075d8aa6604de73e2119e264e4c96751f2a67a2e46cf467a0df8f0520bcf4762b2715aba266d9b3f5e8fa67d12f9caac928b07ac3be99f41120655aa77f6433fc264673a92929e792187f87b5fda50cf2".lines();
 
 
+        // We can look for repeated ciphertext blocks to detect AES ECB mode.
+        let block_size: usize = 16;
 
+        let mut result = (9999999999999, String::new());
+        for (i, ciphertext) in ciphertexts.map(|c| hex_to_bytes(c)).enumerate() {
 
+            let ciphertext_chunks: Vec<&[u8]> = ciphertext.chunks(block_size).collect();
+            //let num_chunks = ciphertext_chunks.len();
+
+            let mut unique_chunks = HashSet::new();
+            for e in ciphertext_chunks {
+                if !unique_chunks.insert(e) {
+                    let c_hex = bytes_to_hex(&ciphertext);
+                    println!("Detected AES ECB at line = {}, ciphertext = {}", i, c_hex);
+                    result.0 = i;
+                    result.1 = c_hex;
+                    break;
+                }
+            }
+        }
+
+        assert_eq!(132, result.0);
+        assert_eq!("d880619740a8a19b7840a8a31c810a3d08649af70dc06f4fd5d2d69c744cd283e2dd052f6b641dbf9d11b0348542bb5708649af70dc06f4fd5d2d69c744cd2839475c9dfdbc1d46597949d9c7e82bf5a08649af70dc06f4fd5d2d69c744cd28397a93eab8d6aecd566489154789a6b0308649af70dc06f4fd5d2d69c744cd283d403180c98c8f6db1f2a3f9c4040deb0ab51b29933f2c123c58386b06fba186a",
+                   result.1);
     }
 
 }
