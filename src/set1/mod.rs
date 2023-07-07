@@ -1,8 +1,8 @@
-mod challenge1;
-mod challenge2;
-mod challenge3;
-mod challenge4;
-mod challenge5;
-mod challenge6;
-mod challenge7;
-mod challenge8;
+pub(crate) mod challenge1;
+pub(crate) mod challenge2;
+pub(crate) mod challenge3;
+pub(crate) mod challenge4;
+pub(crate) mod challenge5;
+pub(crate) mod challenge6;
+pub(crate) mod challenge7;
+pub(crate) mod challenge8;
